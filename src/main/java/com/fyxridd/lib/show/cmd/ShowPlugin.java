@@ -4,13 +4,11 @@ import com.fyxridd.lib.core.api.config.ConfigApi;
 import com.fyxridd.lib.core.api.plugin.SimplePlugin;
 import com.fyxridd.lib.show.cmd.config.CmdConfig;
 import com.fyxridd.lib.show.cmd.manager.CmdManager;
-import com.fyxridd.lib.show.cmd.manager.ConvertManager;
 
 public class ShowPlugin extends SimplePlugin {
     public static ShowPlugin instance;
 
     private CmdManager cmdManager;
-    private ConvertManager convertManager;
 
     //启动插件
     @Override
@@ -21,16 +19,11 @@ public class ShowPlugin extends SimplePlugin {
         ConfigApi.register(pn, CmdConfig.class);
 
         cmdManager = new CmdManager();
-        convertManager = new ConvertManager();
 
         super.onEnable();
     }
 
     public CmdManager getCmdManager() {
         return cmdManager;
-    }
-
-    public ConvertManager getConvertManager() {
-        return convertManager;
     }
 }

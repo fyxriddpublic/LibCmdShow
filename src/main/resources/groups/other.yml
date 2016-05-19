@@ -1,0 +1,12 @@
+zisha:
+  aliases:
+    - "zisa"
+    - "zhisa"
+    - "zhisha"
+  types:
+    1:
+      cmd: "/suicide"
+cmd:
+  types:
+    1:
+      cmd: "/f mp"
