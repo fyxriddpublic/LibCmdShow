@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fyxridd.lib.core.api.CoreApi;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -55,57 +56,62 @@ public class CmdManager {
                 @Override
                 public void execute(Listener listener, Event e) throws EventException {
                     PlayerCommandPreprocessEvent event = (PlayerCommandPreprocessEvent) e;
-                    //没有命令名,无法处理
-                    if (event.getMessage().length() <= 1) return;
-                    //解析
-                    String[] args = event.getMessage().substring(1).split(" ");
-                    String[] argsParam = new String[args.length-1];
-                    if (args.length > 1) System.arraycopy(args, 1, argsParam, 0, args.length - 1);
-                    //检测有无配置
-                    String cmdName = getCmd(args[0]);
-                    if (cmdName != null) {
-                        GroupContext groupContext = getGroupContext(cmdName);
-                        if (groupContext != null) {
-                            CmdContext cmdContext = groupContext.getCmds().get(cmdName);
-                            if (cmdContext != null) {
-                                int index = 1;
-                                FuncContext funcContext;
-                                while ((funcContext = cmdContext.getFuncs().get(index++)) != null) {
-                                    //检测条件
-                                    if (funcContext.getArgsLength() == -1 || funcContext.getArgsLength() == argsParam.length) {
-                                        //检测权限
-                                        if (funcContext.getPer() != null && !PerApi.has(event.getPlayer().getName(), funcContext.getPer())) {
-                                            event.setCancelled(true);
+                    try {
+                        //没有命令名,无法处理
+                        if (event.getMessage().length() <= 1) return;
+                        //解析
+                        String[] args = event.getMessage().substring(1).split(" ");
+                        String[] argsParam = new String[args.length-1];
+                        if (args.length > 1) System.arraycopy(args, 1, argsParam, 0, args.length - 1);
+                        //检测有无配置
+                        String cmdName = getCmd(args[0]);
+                        if (cmdName != null) {
+                            GroupContext groupContext = getGroupContext(cmdName);
+                            if (groupContext != null) {
+                                CmdContext cmdContext = groupContext.getCmds().get(cmdName);
+                                if (cmdContext != null) {
+                                    int index = 1;
+                                    FuncContext funcContext;
+                                    while ((funcContext = cmdContext.getFuncs().get(index++)) != null) {
+                                        //检测条件
+                                        if (funcContext.getArgsLength() == -1 || funcContext.getArgsLength() == argsParam.length) {
+                                            //检测权限
+                                            if (funcContext.getPer() != null && !PerApi.has(event.getPlayer().getName(), funcContext.getPer())) {
+                                                event.setCancelled(true);
+                                                return;
+                                            }
+                                            //不转换
+                                            if (funcContext.getConvertArgs() == null || funcContext.getConvertArgs().length == 0) return;
+                                            //命令转换
+                                            String result = "";
+                                            boolean first = true;
+                                            for (String s:funcContext.getConvertArgs()) {
+                                                if (first) first = false;
+                                                else result += " ";
+                                                result += convert(event.getPlayer(), argsParam, s).trim();
+                                            }
+                                            //检测命令开头进行不同处理
+                                            if (result.startsWith("/")) event.setMessage(result);
+                                            else {
+                                                event.setCancelled(true);
+                                                //因为不是以'/'开头的,因此不会再次触发PlayerCommandPreprocessEvent事件,不用担心造成死循环
+                                                event.getPlayer().chat(result);
+                                            }
                                             return;
                                         }
-                                        //不转换
-                                        if (funcContext.getConvertArgs() == null || funcContext.getConvertArgs().length == 0) return;
-                                        //命令转换
-                                        String result = "";
-                                        boolean first = true;
-                                        for (String s:funcContext.getConvertArgs()) {
-                                            if (first) first = false;
-                                            else result += " ";
-                                            result += convert(event.getPlayer(), argsParam, s).trim();
-                                        }
-                                        //检测命令开头进行不同处理
-                                        if (result.startsWith("/")) event.setMessage(result);
-                                        else {
-                                            event.setCancelled(true);
-                                            //因为不是以'/'开头的,因此不会再次触发PlayerCommandPreprocessEvent事件,不用担心造成死循环
-                                            event.getPlayer().chat(result);
-                                        }
-                                        return;
                                     }
+                                    return;
                                 }
-                                return;
                             }
                         }
-                    }
-                    //无配置
-                    if (config.isConvertDefaultDeny()) {//无配置的禁止
-                        event.setCancelled(true);
-                        MessageApi.send(event.getPlayer(), get(event.getPlayer().getName(), 5), true);
+                        //无配置
+                        if (config.isConvertDefaultDeny()) {//无配置的禁止
+                            event.setCancelled(true);
+                            MessageApi.send(event.getPlayer(), get(event.getPlayer().getName(), 5), true);
+                        }
+                    } catch (Exception e1) {
+                        CoreApi.debug(UtilApi.convertException(e1));
+                        MessageApi.send(event.getPlayer(), get(event.getPlayer().getName(), 15), true);
                     }
                 }
             }, ShowPlugin.instance, true);
