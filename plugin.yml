@@ -1,9 +1,4 @@
 ﻿name: LibCmdShow
 main: com.fyxridd.lib.show.cmd.ShowPlugin
 version: 0.1.0
-depend: [Vault, ProtocolLib, PacketWrapper, LibCore]
-softdepend:
-commands:
-  s:
-    description: InputManager
-    usage: /<command> ?
+depend: [LibCore, LibFunc]
