@@ -10,9 +10,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.fyxridd.lib.core.api.UtilApi;
+import com.fyxridd.lib.core.api.config.basic.ListHelper;
+import com.fyxridd.lib.core.api.config.basic.ListType;
 import com.fyxridd.lib.core.api.config.basic.Path;
 import com.fyxridd.lib.core.api.config.convert.ConfigConvert;
 import com.fyxridd.lib.core.api.config.convert.ConfigConvert.ConfigConverter;
+import com.fyxridd.lib.core.api.config.limit.Min;
 import com.fyxridd.lib.core.api.lang.LangConverter;
 import com.fyxridd.lib.core.api.lang.LangGetter;
 import com.fyxridd.lib.show.cmd.ShowPlugin;
@@ -118,10 +121,43 @@ public class CmdConfig {
     
     @Path("convert.defaultDeny")
     private boolean convertDefaultDeny;
-
+    
     @Path("")
     @ConfigConvert(GroupsConverter.class)
     private Map<String, GroupContext> groups;
+    
+    //help group
+    @Path("help.group.pageSize")
+    @Min(1)
+    private int helpGroupPageSize;
+    @Path("help.group.headers")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpGroupHeaders;
+    @Path("help.group.bodys")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpGroupBodys;
+    @Path("help.group.footers")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpGroupFooters;
+    
+    //help cmd
+    @Path("help.cmd.pageSize")
+    @Min(1)
+    private int helpCmdPageSize;
+    @Path("help.cmd.headers")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpCmdHeaders;
+    @Path("help.cmd.bodys.hideNoPerFunc")
+    private boolean helpCmdBodysHideNoPerFunc;
+    @Path("help.cmd.bodys.cmds")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpCmdBodysCmds;
+    @Path("help.cmd.bodys.funcs")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpCmdBodysFuncs;
+    @Path("help.cmd.footers")
+    @ListHelper(ListType.Integer)
+    private List<Integer> helpCmdFooters;
     
     public LangGetter getLang() {
         return lang;
@@ -137,5 +173,45 @@ public class CmdConfig {
 
     public Map<String, GroupContext> getGroups() {
         return groups;
+    }
+
+    public int getHelpGroupPageSize() {
+        return helpGroupPageSize;
+    }
+
+    public List<Integer> getHelpGroupHeaders() {
+        return helpGroupHeaders;
+    }
+
+    public List<Integer> getHelpGroupBodys() {
+        return helpGroupBodys;
+    }
+
+    public List<Integer> getHelpGroupFooters() {
+        return helpGroupFooters;
+    }
+
+    public int getHelpCmdPageSize() {
+        return helpCmdPageSize;
+    }
+
+    public List<Integer> getHelpCmdHeaders() {
+        return helpCmdHeaders;
+    }
+
+    public boolean isHelpCmdBodysHideNoPerFunc() {
+        return helpCmdBodysHideNoPerFunc;
+    }
+
+    public List<Integer> getHelpCmdBodysCmds() {
+        return helpCmdBodysCmds;
+    }
+
+    public List<Integer> getHelpCmdBodysFuncs() {
+        return helpCmdBodysFuncs;
+    }
+
+    public List<Integer> getHelpCmdFooters() {
+        return helpCmdFooters;
     }
 }

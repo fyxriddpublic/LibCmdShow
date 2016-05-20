@@ -1,31 +1,42 @@
 #组名(可选,默认无组名)
-name: "领地"
+name: "指令帮助"
 
 #描述(可选,默认无描述)
-desc: "领地相关指令"
+desc: "指令帮助相关"
 
 #命令列表
 cmds:
-  land:                   #命令名(大小写不敏感)
+  help:                   #命令名(大小写不敏感)
     aliases:             #命令别名列表(大小写不敏感)(可选,默认无)
-      - "l"
+      - "h"
     funcs:               #功能列表
       1:                      #数字必须从1开始递增(检测会按顺序从小到大进行,如果条件检测成功(不包含权限检测)则不进行后面的检测)
-        useage: "/{cmd}"      #功能用法,可用变量:{cmd}表示命令名(可选,默认无)
-        desc: "打开领地主界面"  #功能描述(可选,默认无)
+        useage: "/{cmd}"     #功能用法,可用变量:{cmd}表示命令名(可选,默认无)
+        desc: "查看帮助"  #功能描述(可选,默认无)
         argsLength: 0          #条件,变量数量,>=0(不包括命令名)(可选,默认-1,-1表示无限制)
         per: ""                 #权限控制(可选,默认无权限)
-        convert: "/f ld"         #命令转换(可选,默认不转换)(注1)
+        convert: "/f LibCmdShow group"         #命令转换(可选,默认不转换)(注1)
       2:
-        useage: "/{cmd} <领地ID/领地名>"
-        desc: "查看指定的领地"
-        cmd: "/f ld s {1}"
+        useage: "/{cmd} page <第几页>"
+        desc: "查看指定页帮助"
+        argsLength: 2
+        convert: "/f LibCmdShow group {1}"
+      3:
+        useage: "/{cmd} <命令组>"
+        desc: "查看指定命令组信息"
+        argsLength: 1
+        convert: "/f LibCmdShow cmd {1}"
+      4:
+        useage: "/{cmd} <命令组> page <第几页>"
+        desc: "查看指定页命令组信息"
+        argsLength: 3
+        convert: "/f LibCmdShow cmd {1} {3}"
   go:
     types:
       1:
         useage: "/{cmd} <领地ID/领地名>"
         desc: "传送指定的领地"
-        cmd: "/f ld go {1}"
+        convert: "/f ld go {1}"
       
 #################################
 #####          注           #####

@@ -19,9 +19,53 @@ defaultDeny: false
 #####         帮助          #####
 #################################
 help:
+  #命令组列表
+  #变量: 
+  #  {page} 当前页
+  #  {maxPage} 最大页  
   group:
-    - 1000
-    - 1010
+    #每页显示的命令组数量,>=1
+    pageSize: 8
+    headers:
+      - 1000
+    #会针对每个组进行重复
+    #额外变量:
+    #  {group} 命令组
+    #  {groupName} 命令组名
+    #  {groupDesc} 命令组描述
+    bodys:
+      - 1010
+    footers:
+      - 1020
+      - 1030
+  #命令列表
+  #变量: 
+  #  {page} 当前页
+  #  {maxPage} 最大页
+  #  {group} 命令组
+  #  {groupName} 命令组名
+  #  {groupDesc} 命令组描述
   cmd:
-    - 2000
-    - 2010
+    #每页显示的功能数量,>=1
+    pageSize: 6
+    headers:
+      - 2000
+      - 2010
+    #会根据每个命令cmd进行重复
+    bodys:
+      #(查看帮助时)是否隐藏无权限的功能
+      hideNoPerFunc: false
+      #命令行
+      #额外变量:
+      #  {cmd} 命令
+      #  {aliases} 别名列表,格式'xx,xx...'或'无'
+      cmds:
+        - 2020
+      #功能行,会根据每个功能进行重复
+      #额外变量:
+      #  {useage} 功能用法,会将内含的'{cmd}'替换为对应的命令
+      #  {desc} 功能描述
+      funcs:
+        - 2030
+    footers:
+      - 2040
