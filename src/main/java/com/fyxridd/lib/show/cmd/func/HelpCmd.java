@@ -1,6 +1,7 @@
 package com.fyxridd.lib.show.cmd.func;
 
 import com.fyxridd.lib.core.api.MessageApi;
+import com.fyxridd.lib.core.api.PerApi;
 import com.fyxridd.lib.core.api.UtilApi;
 import com.fyxridd.lib.core.api.config.ConfigApi;
 import com.fyxridd.lib.core.api.fancymessage.FancyMessage;
@@ -12,6 +13,7 @@ import com.fyxridd.lib.show.cmd.ShowPlugin;
 import com.fyxridd.lib.show.cmd.config.CmdConfig;
 import com.fyxridd.lib.show.cmd.context.FuncContext;
 import com.fyxridd.lib.show.cmd.context.GroupContext;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -147,7 +149,11 @@ public class HelpCmd {
         Set<String> hasShownCmds_ = new HashSet<>();//已经显示过的cmd列表
         for (Object o:UtilApi.getPage(funcs, 0, config.getHelpCmdPageSize(), page)) {
             FuncContext funcContext = (FuncContext) o;
+            
+            //隐藏无权限的功能说明
+            if (config.isHelpCmdBodysHideNoPerFunc() && player != null && funcContext.getPer() != null && !PerApi.has(player, funcContext.getPer())) continue;
 
+            //检测先显示命令行
             Map<String, Object> cmdsParams = new HashMap<>();
             {
                 cmdsParams.putAll(cmdParams);
@@ -155,14 +161,6 @@ public class HelpCmd {
                 cmdsParams.put("aliases", groupContext.getCmds().get(funcContext.getCmd()).getAliasesStr());
             }
 
-            Map<String, Object> funcsParams = new HashMap<>();
-            {
-                funcsParams.putAll(cmdsParams);
-                funcsParams.put("useage", funcContext.getUseage().replace("{cmd}", funcContext.getCmd()));
-                funcsParams.put("desc", funcContext.getDesc());
-            }
-
-            //检测先显示命令行
             if (!hasShownCmds_.contains(funcContext.getCmd())) {
                 hasShownCmds_.add(funcContext.getCmd());
                 //显示
@@ -174,6 +172,13 @@ public class HelpCmd {
             }
 
             //再显示功能行
+            Map<String, Object> funcsParams = new HashMap<>();
+            {
+                funcsParams.putAll(cmdsParams);
+                funcsParams.put("useage", funcContext.getUseage().replace("{cmd}", funcContext.getCmd()));
+                funcsParams.put("desc", funcContext.getDesc());
+            }
+
             for (int line:config.getHelpCmdBodysFuncs()) {
                 FancyMessage msg = get(player, line);
                 MessageApi.convert(msg, funcsParams);
