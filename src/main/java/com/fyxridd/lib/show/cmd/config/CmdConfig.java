@@ -1,10 +1,7 @@
 package com.fyxridd.lib.show.cmd.config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -43,7 +40,7 @@ public class CmdConfig {
                         if (f.getName().endsWith(CMD_FILE_SUFFIX)) {
                             String group = f.getName().substring(0, f.getName().length()-CMD_FILE_SUFFIX.length());
                             try {
-                                groups.put(group, loadGroupContext(f));
+                                groups.put(group, loadGroupContext(group, f));
                             } catch (Exception e) {
                                 throw new Exception("load group '"+group+"' error: "+e.getMessage(),e);
                             }
@@ -56,20 +53,20 @@ public class CmdConfig {
             return groups;
         }
         
-        private GroupContext loadGroupContext(File f) throws Exception {
+        private GroupContext loadGroupContext(String group, File f) throws Exception {
             YamlConfiguration config = UtilApi.loadConfigByUTF8(f);
             if (config == null) throw new Exception("yaml load error!");
             
             String name = config.getString("name");
             String desc = config.getString("desc");
-            Map<String, CmdContext> cmds = new HashMap<>();
+            Map<String, CmdContext> cmds = new LinkedHashMap<>();
             
             {
                 ConfigurationSection cmdsSection = config.getConfigurationSection("cmds");
                 if (cmdsSection != null) {
                     for (String cmd:cmdsSection.getValues(false).keySet()) {
                         try {
-                            cmds.put(cmd.toLowerCase(), loadCmdContext(cmdsSection.getConfigurationSection(cmd)));
+                            cmds.put(cmd.toLowerCase(), loadCmdContext(cmd, cmdsSection.getConfigurationSection(cmd)));
                         } catch (Exception e) {
                             throw new Exception("load cmd '"+cmd+"' error: "+e.getMessage(), e);
                         }
@@ -77,13 +74,13 @@ public class CmdConfig {
                 }   
             }
             
-            return new GroupContext(name, desc, cmds);
+            return new GroupContext(group, name, desc, cmds);
         }
 
-        private CmdContext loadCmdContext(ConfigurationSection cmdSection) throws Exception {
+        private CmdContext loadCmdContext(String cmd, ConfigurationSection cmdSection) throws Exception {
             List<String> aliases = new ArrayList<>();
             for (String s:cmdSection.getStringList("aliases")) aliases.add(s.toLowerCase());
-            Map<Integer, FuncContext> funcs = new HashMap<>();
+            Map<Integer, FuncContext> funcs = new LinkedHashMap<>();
             {
                 ConfigurationSection funcsSection = cmdSection.getConfigurationSection("funcs");
                 if (funcsSection != null) {
@@ -91,24 +88,24 @@ public class CmdConfig {
                     while (funcsSection.contains(""+(++index))) {
                         try {
                             ConfigurationSection funcSection = funcsSection.getConfigurationSection(""+index);
-                            funcs.put(index, loadFuncContext(funcSection));
+                            funcs.put(index, loadFuncContext(cmd, funcSection));
                         } catch (Exception e) {
                             throw new Exception("load index "+index+" error: "+e.getMessage(), e);
                         }
                     }
                 }   
             }
-            return new CmdContext(aliases, funcs);
+            return new CmdContext(cmd, aliases, funcs);
         }
 
-        private FuncContext loadFuncContext(ConfigurationSection funcSection) throws Exception {
+        private FuncContext loadFuncContext(String cmd, ConfigurationSection funcSection) throws Exception {
             String useage = funcSection.getString("useage");
             String desc = funcSection.getString("desc");
             int argsLength = funcSection.getInt("argsLength");
             if (argsLength < -1) throw new Exception("argsLength can't less than -1");
             String per = funcSection.getString("per");
             String convert = funcSection.getString("convert");
-            return new FuncContext(useage, desc, argsLength, per, convert);
+            return new FuncContext(cmd, useage, desc, argsLength, per, convert);
         }
     }
     

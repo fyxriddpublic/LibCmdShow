@@ -3,6 +3,7 @@ show-2: "&c{0}插件v{1}已经停止!"
 show-5: "&b[命令管理]&c此命令未配置,禁止使用."
 show-15: "&c执行命令出错."
 show-20: "&c页面只能在{0}-{1}之间."
+show-30: "&c指定的命令组'{0}'不存在."
 
 show-1000: "          &a<命令组列表{page}/{maxPage}>"
 show-1010: "&a{group} &b{groupName} &e{groupDesc}"

@@ -1,6 +1,8 @@
 package com.fyxridd.lib.show.cmd.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,6 +40,8 @@ public class CmdManager {
     private Map<String, GroupContext> cmdToGroups = new HashMap<>();
     //命令别名(命令名本身也在内) 命令名
     private Map<String, String> aliasToCmd = new HashMap<>();
+    //命令组 功能列表
+    private Map<String, List<FuncContext>> groupToFuncs = new HashMap<>();
     
     public CmdManager() {
         //添加配置监听
@@ -141,6 +145,14 @@ public class CmdManager {
     }
 
     /**
+     * 获取命令组内的所有功能列表
+     * @return 不存在返回null
+     */
+    public List<FuncContext> getGroupFuncs(String group) {
+        return groupToFuncs.get(group);
+    }
+
+    /**
      * 变量转换,包括:
      * {name}
      * {x}
@@ -178,6 +190,12 @@ public class CmdManager {
                 //aliases
                 for (String aliase:entry.getValue().getAliases()) aliasToCmd.put(aliase, entry.getKey());
             }
+        }
+
+        for (GroupContext groupContext:config.getGroups().values()) {
+            List<FuncContext> funcs = new ArrayList<>();
+            groupToFuncs.put(groupContext.getGroup(), funcs);
+            for (CmdContext cmdContext:groupContext.getCmds().values()) funcs.addAll(cmdContext.getFuncs().values());
         }
     }
 
