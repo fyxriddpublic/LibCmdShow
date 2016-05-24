@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import com.fyxridd.lib.core.api.CoreApi;
 
+import com.fyxridd.lib.core.api.config.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -22,7 +23,6 @@ import com.fyxridd.lib.core.api.PerApi;
 import com.fyxridd.lib.core.api.UtilApi;
 import com.fyxridd.lib.core.api.config.ConfigApi;
 import com.fyxridd.lib.core.api.fancymessage.FancyMessage;
-import com.fyxridd.lib.core.config.ConfigManager;
 import com.fyxridd.lib.func.api.FuncApi;
 import com.fyxridd.lib.show.cmd.ShowPlugin;
 import com.fyxridd.lib.show.cmd.config.CmdConfig;
@@ -45,7 +45,7 @@ public class CmdManager {
     
     public CmdManager() {
         //添加配置监听
-        ConfigApi.addListener(ShowPlugin.instance.pn, CmdConfig.class, new ConfigManager.Setter<CmdConfig>() {
+        ConfigApi.addListener(ShowPlugin.instance.pn, CmdConfig.class, new Setter<CmdConfig>() {
             @Override
             public void set(CmdConfig value) {
                 config = value;
