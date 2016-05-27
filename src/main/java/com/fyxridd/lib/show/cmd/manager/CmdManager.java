@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import com.fyxridd.lib.core.api.CoreApi;
 
 import com.fyxridd.lib.core.api.config.Setter;
+import com.fyxridd.lib.show.cmd.api.ShowApi;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -32,8 +33,6 @@ import com.fyxridd.lib.show.cmd.context.GroupContext;
 import com.fyxridd.lib.show.cmd.func.HelpCmd;
 
 public class CmdManager {
-    public static final String CMD = "cmd";
-    
     private CmdConfig config;
 
     //命令名 命令组
@@ -54,7 +53,7 @@ public class CmdManager {
             }
         });
         //注册功能类型
-        FuncApi.registerTypeHook(CMD , config.getCmdFuncPrefix());
+        FuncApi.registerTypeHook(ShowApi.CMD , config.getCmdFuncPrefix());
         //注册功能
         FuncApi.register(ShowPlugin.instance.pn, new HelpCmd());
         //注册事件
