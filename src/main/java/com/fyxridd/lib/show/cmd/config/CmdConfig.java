@@ -27,7 +27,7 @@ public class CmdConfig {
     /**
      * 命令转换
      */
-    private class GroupsConverter implements ConfigConverter<Map<String, GroupContext>> {
+    private static class GroupsConverter implements ConfigConverter<Map<String, GroupContext>> {
         @Override
         public Map<String, GroupContext> convert(String plugin, ConfigurationSection config) throws Exception {
             Map<String, GroupContext> groups = new HashMap<>();
